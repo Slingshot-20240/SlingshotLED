@@ -4,59 +4,38 @@
 
 #include <vector>
 
-enum quadrant
+namespace quadrant
 {
-    ONE,
-    TWO,
-    THREE,
-    FOUR
-};
+    struct Bounds
+    {
+        int start;
+        int end;
+    };
 
-std::vector<quadrant> HALVE_ONE = {ONE, TWO};
-std::vector<quadrant> HALVE_TWO = {THREE, FOUR};
+    struct Region
+    {
+        Bounds x;
+        Bounds y;
+    };
+
+    constexpr Region ONE{{4, 8}, {0, 4}};
+    constexpr Region TWO{{0, 4}, {0, 4}};
+    constexpr Region THREE{{0, 4}, {4, 8}};
+    constexpr Region FOUR{{4, 8}, {4, 8}};
+}
+
+std::vector<quadrant::Region> HALVE_ONE = {quadrant::ONE, quadrant::TWO};
+std::vector<quadrant::Region> HALVE_TWO = {quadrant::THREE, quadrant::FOUR};
 
 /// Fills a specific quadrant with the given color.
 /// @param quad The quadrant to fill.
 /// @param color The color to fill the quadrant with.
 /// @param leds The LED array to modify.
-void fillQuadrant(quadrant quad, CRGB color, CRGB *leds)
+void fillQuadrant(quadrant::Region quad, CRGB color, CRGB *leds)
 {
-    uint8_t startX = 0;
-    uint8_t endX = 4;
-    uint8_t startY = 0;
-    uint8_t endY = 4;
-
-    switch (quad)
+    for (uint8_t y = quad.y.start; y < quad.y.end; y++)
     {
-    case ONE:
-        startX = 4;
-        endX = 8;
-        startY = 0;
-        endY = 4;
-        break;
-    case TWO:
-        startX = 0;
-        endX = 4;
-        startY = 0;
-        endY = 4;
-        break;
-    case THREE:
-        startX = 0;
-        endX = 4;
-        startY = 4;
-        endY = 8;
-        break;
-    case FOUR:
-        startX = 4;
-        endX = 8;
-        startY = 4;
-        endY = 8;
-        break;
-    }
-
-    for (uint8_t y = startY; y < endY; y++)
-    {
-        for (uint8_t x = startX; x < endX; x++)
+        for (uint8_t x = quad.x.start; x < quad.x.end; x++)
         {
             leds[y * 8 + x] = color;
         }
@@ -67,7 +46,7 @@ void fillQuadrant(quadrant quad, CRGB color, CRGB *leds)
 /// @param quads The vector of quadrants to fill.
 /// @param color The color to fill the quadrants with.
 /// @param leds The LED array to modify.
-void fillQuadrants(std::vector<quadrant> &quads, CRGB color, CRGB *leds)
+void fillQuadrants(std::vector<quadrant::Region> &quads, CRGB color, CRGB *leds)
 {
     for (uint8_t i = 0; i < quads.size(); i++)
 

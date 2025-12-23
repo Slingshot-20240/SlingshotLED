@@ -29,8 +29,8 @@ void loop()
 {
   /// TODO: Implement processing based on Digital IO output from Control Hub
 
-  fillQuadrants(HALVE_ONE, COLOR_ARTIFACT_PURPLE, leds);
-  fillQuadrants(HALVE_TWO, COLOR_ARTIFACT_GREEN, leds);
+  fillQuadrants(HALVE_ONE, color::ARTIFACT_PURPLE, leds);
+  fillQuadrants(HALVE_TWO, color::ARTIFACT_GREEN, leds);
 
   FastLED.show();
 }
