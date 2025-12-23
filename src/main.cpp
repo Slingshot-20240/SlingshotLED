@@ -6,10 +6,6 @@
 /// @warning Do not change these pin definitions unless you know what you are doing!
 constexpr int digitalPins[2] = {21, 20};
 
-/// @brief LED panel brightness setting (0-255)
-/// @note Max brightness may never be reached due to power limits.
-constexpr int brightness = 64;
-
 /// @brief Voltage limit (V)
 /// @warning Do not change this value unless you know what you are doing!
 constexpr double maxVoltage = 4.5;
@@ -18,6 +14,10 @@ constexpr double maxVoltage = 4.5;
 /// @note Adjust based on your power supply capabilities.
 constexpr int maxCurrent = 500;
 
+/// @brief LED panel brightness setting (0-255)
+/// @note Max brightness may never be reached due to power limits.
+constexpr int brightness = 64;
+
 #include <FastLED.h>
 
 #include "led_panel.h"
@@ -25,13 +25,12 @@ constexpr int maxCurrent = 500;
 
 using led_panel::fillRectangularRegion;
 
-CRGB leds[64];
+/// @brief Colors for each half of the panel
+/// @note To use custom predefined colors from color.h, reference color::COLOR_NAME
+/// @note Alternatively, use built-in CRGB colors like CRGB::Red, CRGB::Blue, etc.
+const CRGB halveColors[2] = {color::SLINGSHOT_PURPLE, CRGB::Green};
 
-// Colors for each half of the panel
-// To use custom predefined colors from color.h, reference color::COLOR_NAME
-// Or, use built-in CRGB colors like CRGB::Red, CRGB::Blue, etc.
-CRGB halveOneColor = color::SLINGSHOT_PURPLE;
-CRGB halveTwoColor = color::ARTIFACT_GREEN;
+CRGB leds[64];
 
 void setup()
 {
@@ -48,7 +47,7 @@ void loop()
 {
   if (digitalRead(digitalPins[0]) == HIGH)
   {
-    fillRectangularRegion(led_panel::HALVE_ONE, halveOneColor, leds);
+    fillRectangularRegion(led_panel::HALVE_ONE, halveColors[0], leds);
   }
   else
   {
@@ -57,7 +56,7 @@ void loop()
 
   if (digitalRead(digitalPins[1]) == HIGH)
   {
-    fillRectangularRegion(led_panel::HALVE_TWO, halveTwoColor, leds);
+    fillRectangularRegion(led_panel::HALVE_TWO, halveColors[1], leds);
   }
   else
   {
