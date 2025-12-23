@@ -2,6 +2,13 @@
 /// @brief     Slingshot Robot LED Panel Controller
 /// @copyright Copyright (c) 2025 FTC Team 20240 Slingshot. MIT License.
 
+#include <FastLED.h>
+
+#include "led_panel.h"
+#include "color.h"
+
+using led_panel::fillRectangularRegion;
+
 /// @brief GPIO mapping for Control Hub digital IO port 0-1
 /// @warning Do not change these pin definitions unless you know what you are doing!
 constexpr int digitalPins[2] = {21, 20};
@@ -17,13 +24,6 @@ constexpr int maxCurrent = 500;
 /// @brief LED panel brightness setting (0-255)
 /// @note Max brightness may never be reached due to power limits.
 constexpr int brightness = 64;
-
-#include <FastLED.h>
-
-#include "led_panel.h"
-#include "color.h"
-
-using led_panel::fillRectangularRegion;
 
 /// @brief Colors for each half of the panel
 /// @note To use custom predefined colors from color.h, reference color::COLOR_NAME
