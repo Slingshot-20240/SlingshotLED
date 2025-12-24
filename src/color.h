@@ -2,12 +2,22 @@
 /// @brief     Predefined Colors
 /// @copyright Copyright (c) 2025 FTC Team 20240 Slingshot. MIT License.
 
+#pragma once
+
+#include <FastLED.h>
+
+/// @namespace color
+/// @brief Provides predefined color constants for LED displays.
 namespace color
 {
-    CRGB OFF = CRGB::Black;
+  constexpr CRGB kOff = CHSV(0, 0, 0); ///< LED off (black).
 
-    CRGB ARTIFACT_PURPLE = CHSV(276 / 360.0 * 255, 95 / 100.0 * 255, 94 / 100.0 * 255);
-    CRGB ARTIFACT_GREEN = CHSV(129 / 360.0 * 255, 91 / 100.0 * 255, 78 / 100.0 * 255);
+  constexpr CRGB kArtifactPurple =
+      CHSV(276 / 360.0 * 255, 95 / 100.0 * 255, 94 / 100.0 * 255); ///< DECODE artifact purple.
+  constexpr CRGB kArtifactGreen =
+      CHSV(129 / 360.0 * 255, 91 / 100.0 * 255, 78 / 100.0 * 255); ///< DECODE artifact green.
 
-    CRGB SLINGSHOT_PURPLE = CHSV(255 / 360.0 * 255, 67 / 100.0 * 255, 64 / 100.0 * 255);
-}
+  constexpr CRGB kSlingshotPurple =
+      CHSV(255 / 360.0 * 255, 67 / 100.0 * 255, 64 / 100.0 * 255); ///< Team Slingshot purple.
+
+} // namespace color

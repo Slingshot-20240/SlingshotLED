@@ -4,64 +4,56 @@
 
 #include <FastLED.h>
 
-#include "led_panel.h"
 #include "color.h"
+#include "led_panel.h"
 
-using led_panel::fillRectangularRegion;
-
-/// @brief GPIO mapping for Control Hub digital IO port 0-1
+// Hardware configuration
+/// @brief GPIO mapping for Control Hub digital IO ports
 /// @warning Do not change these pin definitions unless you know what you are doing!
-constexpr int digitalPins[2] = {21, 20};
+namespace hardware
+{
+  constexpr uint8_t kDigitalPin0 = 21; ///< Control Hub digital port 0.
+  constexpr uint8_t kDigitalPin1 = 20; ///< Control Hub digital port 1.
+  constexpr uint8_t kLedDataPin = 16;  ///< LED board DIN pin.
+} // namespace hardware
 
+// LED configuration
 /// @brief Voltage limit (V)
 /// @warning Do not change this value unless you know what you are doing!
-constexpr double maxVoltage = 4.5;
+constexpr double kMaxVoltage = 4.5;
 
 /// @brief Current limit (mA)
 /// @note Adjust based on your power supply capabilities.
-constexpr int maxCurrent = 500;
+constexpr int kMaxCurrent = 500;
 
 /// @brief LED panel brightness setting (0-255)
 /// @note Max brightness may never be reached due to power limits.
-constexpr int brightness = 64;
+constexpr uint8_t kBrightness = 64;
 
-/// @brief Colors for each half of the panel
-/// @note To use custom predefined colors from color.h, reference color::COLOR_NAME
-/// @note Alternatively, use built-in CRGB colors like CRGB::Red, CRGB::Blue, etc.
-const CRGB halveColors[2] = {color::SLINGSHOT_PURPLE, CRGB::Green};
+/// @brief Total number of LEDs on the panel
+constexpr uint8_t kLedCount = led_panel::kPanelWidth * led_panel::kPanelHeight;
 
-CRGB leds[64];
+// Global state
+CRGB gLeds[kLedCount]; ///< LED array buffer.
 
 void setup()
 {
-  pinMode(digitalPins[0], INPUT);
-  pinMode(digitalPins[1], INPUT);
+  pinMode(hardware::kDigitalPin0, INPUT);
+  pinMode(hardware::kDigitalPin1, INPUT);
 
-  FastLED.addLeds<WS2812B, 16, GRB>(leds, 64).setCorrection(TypicalSMD5050);
-  FastLED.setMaxPowerInVoltsAndMilliamps(maxVoltage, maxCurrent);
+  FastLED.addLeds<WS2812B, hardware::kLedDataPin, GRB>(gLeds, kLedCount)
+      .setCorrection(TypicalSMD5050);
+  FastLED.setMaxPowerInVoltsAndMilliamps(kMaxVoltage, kMaxCurrent);
   FastLED.clear(true);
-  FastLED.setBrightness(brightness);
+  FastLED.setBrightness(kBrightness);
 }
 
 void loop()
 {
-  if (digitalRead(digitalPins[0]) == HIGH)
-  {
-    fillRectangularRegion(led_panel::HALVE_ONE, halveColors[0], leds);
-  }
-  else
-  {
-    fillRectangularRegion(led_panel::HALVE_ONE, color::OFF, leds);
-  }
+  const bool pin0On = digitalRead(hardware::kDigitalPin0) == HIGH;
+  const bool pin1On = digitalRead(hardware::kDigitalPin1) == HIGH;
 
-  if (digitalRead(digitalPins[1]) == HIGH)
-  {
-    fillRectangularRegion(led_panel::HALVE_TWO, halveColors[1], leds);
-  }
-  else
-  {
-    fillRectangularRegion(led_panel::HALVE_TWO, color::OFF, leds);
-  }
-
+  led_panel::fillWhen(pin0On, led_panel::kTopHalf, color::kSlingshotPurple, gLeds);
+  led_panel::fillWhen(pin1On, led_panel::kBottomHalf, CRGB::Green, gLeds);
   FastLED.show();
 }
