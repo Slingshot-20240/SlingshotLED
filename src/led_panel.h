@@ -70,5 +70,4 @@ namespace led_panel
     const CRGB fillColor = condition ? color : CRGB::Black;
     fill(rect, fillColor, leds);
   }
-
 } // namespace led_panel

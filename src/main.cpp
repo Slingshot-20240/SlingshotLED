@@ -12,9 +12,9 @@
 /// @warning Do not change these pin definitions unless you know what you are doing!
 namespace hardware
 {
-  constexpr uint8_t kDigitalPin0 = 21; ///< Control Hub digital port 0.
-  constexpr uint8_t kDigitalPin1 = 20; ///< Control Hub digital port 1.
-  constexpr uint8_t kLedDataPin = 16;  ///< LED board DIN pin.
+  constexpr uint8_t kControlHubDigitalPin0 = 21; ///< Control Hub digital port 0.
+  constexpr uint8_t kControlHubDigitalPin1 = 20; ///< Control Hub digital port 1.
+  constexpr uint8_t kLedBoardDataPin = 16;       ///< LED board DIN pin.
 } // namespace hardware
 
 // LED configuration
@@ -38,10 +38,10 @@ CRGB gLeds[kLedCount]; ///< LED array buffer.
 
 void setup()
 {
-  pinMode(hardware::kDigitalPin0, INPUT);
-  pinMode(hardware::kDigitalPin1, INPUT);
+  pinMode(hardware::kControlHubDigitalPin0, INPUT);
+  pinMode(hardware::kControlHubDigitalPin1, INPUT);
 
-  FastLED.addLeds<WS2812B, hardware::kLedDataPin, GRB>(gLeds, kLedCount)
+  FastLED.addLeds<WS2812B, hardware::kLedBoardDataPin, GRB>(gLeds, kLedCount)
       .setCorrection(TypicalSMD5050);
   FastLED.setMaxPowerInVoltsAndMilliamps(kMaxVoltage, kMaxCurrent);
   FastLED.clear(true);
@@ -50,10 +50,18 @@ void setup()
 
 void loop()
 {
-  const bool pin0On = digitalRead(hardware::kDigitalPin0) == HIGH;
-  const bool pin1On = digitalRead(hardware::kDigitalPin1) == HIGH;
+  // Read digital signals from Control Hub
+  const bool pin0On = digitalRead(hardware::kControlHubDigitalPin0) == HIGH;
+  const bool pin1On = digitalRead(hardware::kControlHubDigitalPin1) == HIGH;
 
   led_panel::fillWhen(pin0On, led_panel::kTopHalf, color::kSlingshotPurple, gLeds);
   led_panel::fillWhen(pin1On, led_panel::kBottomHalf, CRGB::Green, gLeds);
+
+  // Turn off corners for aesthetics (to account for broken corner LED in bottom right quadrant)
+  gLeds[0] = color::kOff;
+  gLeds[7] = color::kOff;
+  gLeds[56] = color::kOff;
+  gLeds[63] = color::kOff;
+
   FastLED.show();
 }
