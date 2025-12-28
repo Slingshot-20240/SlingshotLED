@@ -12,8 +12,8 @@
 /// @warning Do not change these pin definitions unless you know what you are doing!
 namespace hardware
 {
-  constexpr uint8_t kControlHubDigitalPin0 = 21; ///< Control Hub digital port 0.
-  constexpr uint8_t kControlHubDigitalPin1 = 20; ///< Control Hub digital port 1.
+  constexpr uint8_t kControlHubDigitalPin0 = 20; ///< Control Hub digital port 0.
+  constexpr uint8_t kControlHubDigitalPin1 = 21; ///< Control Hub digital port 1.
   constexpr uint8_t kLedBoardDataPin = 16;       ///< LED board DIN pin.
 } // namespace hardware
 
@@ -54,8 +54,10 @@ void loop()
   const bool pin0On = digitalRead(hardware::kControlHubDigitalPin0) == HIGH;
   const bool pin1On = digitalRead(hardware::kControlHubDigitalPin1) == HIGH;
 
-  led_panel::fillWhen(pin0On, led_panel::kTopHalf, color::kSlingshotPurple, gLeds);
-  led_panel::fillWhen(pin1On, led_panel::kBottomHalf, CRGB::Green, gLeds);
+  led_panel::fillWhen(!pin0On && !pin1On, led_panel::kFullPanel, color::kOff, gLeds);
+  led_panel::fillWhen(pin0On && !pin1On, led_panel::kFullPanel, CRGB::Yellow, gLeds);
+  led_panel::fillWhen(!pin0On && pin1On, led_panel::kFullPanel, CRGB::Red, gLeds);
+  led_panel::fillWhen(pin0On && pin1On, led_panel::kFullPanel, CRGB::Green, gLeds);
 
   // Turn off corners for aesthetics (to account for broken corner LED in bottom right quadrant)
   gLeds[0] = color::kOff;

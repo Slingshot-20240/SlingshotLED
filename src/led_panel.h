@@ -64,9 +64,15 @@ namespace led_panel
   /// @param rect The rectangular region to fill.
   /// @param color The color to fill the region with when condition is true.
   /// @param leds Pointer to the LED array to modify.
-  inline void fillWhen(bool condition, const RectangularRegion &rect, const CRGB &color,
-                       CRGB *leds) noexcept
+  /// @param nonDestructive If true, the region will remain unchanged when condition is false.
+  inline void fillWhen(bool condition, const RectangularRegion &rect, const CRGB &color, CRGB *leds,
+                       bool nonDestructive = true) noexcept
   {
+    if (nonDestructive && !condition)
+    {
+      return;
+    }
+
     const CRGB fillColor = condition ? color : CRGB::Black;
     fill(rect, fillColor, leds);
   }
